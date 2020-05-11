@@ -1,31 +1,22 @@
 package de.pheru.darts.backend.mocks.repositories;
 
-
 import de.pheru.darts.backend.entities.user.UserEntity;
 import de.pheru.darts.backend.repositories.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 public class MockedUserRepository extends MockedRepository implements UserRepository {
 
     private final List<UserEntity> users = new ArrayList<>();
 
     @Override
-    public UserEntity findById(final String id) {
-        for (final UserEntity user : users) {
-            if (user.getId().equals(id)) {
-                return user;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public List<UserEntity> findAll(final Iterable<String> ids) {
+    public List<UserEntity> findAllByIdIn(final Iterable<String> ids) {
         final List<UserEntity> users = new ArrayList<>();
         for (final String id : ids) {
-            final UserEntity user = findById(id);
+            final UserEntity user = findById(id).orElse(null);
             if (user != null) {
                 users.add(user);
             }
@@ -44,16 +35,6 @@ public class MockedUserRepository extends MockedRepository implements UserReposi
     }
 
     @Override
-    public UserEntity deleteById(final String id) {
-        for (final UserEntity savedEntity : new ArrayList<>(users)) {
-            if (savedEntity.getId().equals(id)) {
-                users.remove(savedEntity);
-            }
-        }
-        return null;
-    }
-
-    @Override
     public <S extends UserEntity> S save(final S s) {
         users.add(s);
         if (s.getId() == null || s.getId().isEmpty()) {
@@ -63,17 +44,22 @@ public class MockedUserRepository extends MockedRepository implements UserReposi
     }
 
     @Override
-    public <S extends UserEntity> Iterable<S> save(final Iterable<S> iterable) {
+    public <S extends UserEntity> Iterable<S> saveAll(final Iterable<S> iterable) {
         throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
-    public UserEntity findOne(final String s) {
-        throw new UnsupportedOperationException("Not implemented");
+    public Optional<UserEntity> findById(final String id) {
+        for (final UserEntity user : users) {
+            if (user.getId().equals(id)) {
+                return Optional.of(user);
+            }
+        }
+        return Optional.empty();
     }
 
     @Override
-    public boolean exists(final String s) {
+    public boolean existsById(final String id) {
         throw new UnsupportedOperationException("Not implemented");
     }
 
@@ -83,13 +69,18 @@ public class MockedUserRepository extends MockedRepository implements UserReposi
     }
 
     @Override
+    public Iterable<UserEntity> findAllById(final Iterable<String> iterable) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
     public long count() {
         throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
-    public void delete(final String s) {
-        throw new UnsupportedOperationException("Not implemented");
+    public void deleteById(final String id) {
+        users.removeIf(savedEntity -> savedEntity.getId().equals(id));
     }
 
     @Override
@@ -98,7 +89,7 @@ public class MockedUserRepository extends MockedRepository implements UserReposi
     }
 
     @Override
-    public void delete(final Iterable<? extends UserEntity> iterable) {
+    public void deleteAll(final Iterable<? extends UserEntity> iterable) {
         throw new UnsupportedOperationException("Not implemented");
     }
 

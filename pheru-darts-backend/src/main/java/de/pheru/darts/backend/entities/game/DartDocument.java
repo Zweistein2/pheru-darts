@@ -1,15 +1,27 @@
 package de.pheru.darts.backend.entities.game;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBDocument;
+import org.hibernate.annotations.GenericGenerator;
 
-@DynamoDBDocument
+import javax.persistence.*;
+
+@Entity
+@Table(name = "Dart_Documents")
 public class DartDocument {
 
-    @DynamoDBAttribute
+    @Id
+    @GeneratedValue(generator="system-uuid")
+    @GenericGenerator(name="system-uuid", strategy = "uuid")
+    private String id;
     private int multiplier;
-    @DynamoDBAttribute
     private int value;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(final String id) {
+        this.id = id;
+    }
 
     public int getMultiplier() {
         return multiplier;

@@ -15,13 +15,11 @@ import de.pheru.darts.backend.repositories.NotificationRepository;
 import de.pheru.darts.backend.repositories.PlayerPermissionRepository;
 import de.pheru.darts.backend.repositories.UserRepository;
 import de.pheru.darts.backend.security.SecurityUtil;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/game")
@@ -69,7 +67,7 @@ public class GameController {
 
             if (!playerDto.getId().equals(loggedInUserId)) {
                 if (loggedInUsername == null) {
-                    final UserEntity loggedInUser = userRepository.findById(loggedInUserId);
+                    final UserEntity loggedInUser = userRepository.findById(loggedInUserId).orElseThrow(NoSuchElementException::new);
                     loggedInUsername = loggedInUser.getName();
                 }
                 final NotificationEntity notification = NotificationTemplates.gameSaved(

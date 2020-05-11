@@ -17,6 +17,8 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 
@@ -96,7 +98,7 @@ public class UserControllerTest extends ControllerTest {
         UserDto putUserDto = userController.putUser(nameModificationDto);
 
         assertEquals(nameModificationDto.getNewName(), putUserDto.getName());
-        UserEntity savedUser = userRepository.findById(loggedInUser.getId());
+        UserEntity savedUser = userRepository.findById(loggedInUser.getId()).orElseThrow(NoSuchElementException::new);
         assertEquals(nameModificationDto.getNewName(), savedUser.getName());
 
         // Passwort
@@ -106,7 +108,7 @@ public class UserControllerTest extends ControllerTest {
         pwModificationDto.setCurrentPassword(LOGIN_PASSWORD);
         userController.putUser(pwModificationDto);
 
-        savedUser = userRepository.findById(loggedInUser.getId());
+        savedUser = userRepository.findById(loggedInUser.getId()).orElseThrow(NoSuchElementException::new);
         assertNotEquals(pwModificationDto.getNewPassword(), savedUser.getPassword());
         assertTrue(passwordEncoder.matches(pwModificationDto.getNewPassword(), savedUser.getPassword()));
 
@@ -118,7 +120,7 @@ public class UserControllerTest extends ControllerTest {
         putUserDto = userController.putUser(namePwModificationDto);
 
         assertEquals(namePwModificationDto.getNewName(), putUserDto.getName());
-        savedUser = userRepository.findById(loggedInUser.getId());
+        savedUser = userRepository.findById(loggedInUser.getId()).orElseThrow(NoSuchElementException::new);
         assertEquals(namePwModificationDto.getNewName(), savedUser.getName());
         assertNotEquals(namePwModificationDto.getNewPassword(), savedUser.getPassword());
         assertTrue(passwordEncoder.matches(namePwModificationDto.getNewPassword(), savedUser.getPassword()));
@@ -170,7 +172,7 @@ public class UserControllerTest extends ControllerTest {
             userController.putUser(modificationDto);
             fail("ValidationException expected");
         } catch (final ValidationException e) {
-            final UserEntity savedUser = userRepository.findById(loggedInUser.getId());
+            final UserEntity savedUser = userRepository.findById(loggedInUser.getId()).orElseThrow(NoSuchElementException::new);
             assertEquals(loggedInUser.getName(), savedUser.getName());
             assertNotEquals(modificationDto.getNewName(), savedUser.getName());
         }
@@ -193,7 +195,7 @@ public class UserControllerTest extends ControllerTest {
             userController.putUser(modificationDto);
             fail("ValidationException expected");
         } catch (final ValidationException e) {
-            final UserEntity savedUser = userRepository.findById(loggedInUser.getId());
+            final UserEntity savedUser = userRepository.findById(loggedInUser.getId()).orElseThrow(NoSuchElementException::new);
             assertEquals(MockedUserValidation.VALIDATE_PASSWORD_FAILED, e.getMessage());
             assertEquals(loggedInUser.getPassword(), savedUser.getPassword());
             assertNotEquals(modificationDto.getNewPassword(), savedUser.getPassword());
@@ -220,7 +222,7 @@ public class UserControllerTest extends ControllerTest {
 
         userController.deleteUser(createUserDeletionDto(LOGIN_PASSWORD));
 
-        assertNull(userRepository.findById(loggedInUser.getId()));
+        assertEquals(Optional.empty(), userRepository.findById(loggedInUser.getId()));
         assertTrue(playerPermissionRepository.findByUserId(loggedInUser.getId()).isEmpty());
         assertTrue(playerPermissionRepository.findByPermittedUserId(loggedInUser.getId()).isEmpty());
         assertTrue(gamesRepository.findByUserId(loggedInUser.getId()).isEmpty());

@@ -9,7 +9,7 @@ public interface NotificationRepository extends CrudRepository<NotificationEntit
 
     List<NotificationEntity> findByUserIdOrderByTimestamp(final String userId);
 
-    List<NotificationEntity> findAll(final Iterable<String> ids);
+    List<NotificationEntity> findAllByIdIn(final Iterable<String> ids);
 
     List<NotificationEntity> deleteAllByUserId(final String userId);
 }

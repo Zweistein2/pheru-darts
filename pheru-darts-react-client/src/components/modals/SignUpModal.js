@@ -75,6 +75,8 @@ class SignUpModal extends React.Component {
                 </div>
                 }
                 <Button bsStyle="link" onClick={() => {
+                    this.handlePasswordRepeatChange(undefined);
+                    this.handlePasswordChange(undefined);
                     this.props.hide();
                     this.props.showLogin();
                 }}>Zurück zur Anmeldung</Button>

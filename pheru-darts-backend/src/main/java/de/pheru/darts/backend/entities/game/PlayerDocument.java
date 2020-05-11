@@ -1,16 +1,19 @@
 package de.pheru.darts.backend.entities.game;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBDocument;
+import org.hibernate.annotations.GenericGenerator;
 
+import javax.persistence.*;
 import java.util.List;
 
-@DynamoDBDocument
+@Entity
+@Table(name = "Player_Documents")
 public class PlayerDocument {
 
-    @DynamoDBAttribute
+    @Id
+    @GeneratedValue(generator="system-uuid")
+    @GenericGenerator(name="system-uuid", strategy = "uuid")
     private String id;
-    @DynamoDBAttribute
+    @OneToMany
     private List<AufnahmeDocument> aufnahmen;
 
     public String getId() {

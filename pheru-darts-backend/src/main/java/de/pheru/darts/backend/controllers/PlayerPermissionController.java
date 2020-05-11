@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/playerPermission")
@@ -59,7 +60,7 @@ public class PlayerPermissionController {
         playerPermissionRepository.save(newPlayerPermission);
         LOGGER.info("Permission with user=" + loggedInUserId + ", permitted=" + idToPermit + " saved.");
 
-        final UserEntity loggedInUser = userRepository.findById(loggedInUserId);
+        final UserEntity loggedInUser = userRepository.findById(loggedInUserId).orElseThrow(() -> new UserNotFoundException("Der User existiert nicht"));
         final NotificationEntity notification = NotificationTemplates.permissionGranted(
                 idToPermit, timestamp.getTime(), loggedInUser.getName());
         notificationRepository.save(notification);
@@ -76,7 +77,7 @@ public class PlayerPermissionController {
         final UserEntity userToPermit;
 
         if (id != null && !id.isEmpty()) {
-            userToPermit = userRepository.findById(id);
+            userToPermit = userRepository.findById(id).orElse(null);
             if (userToPermit == null) {
                 LOGGER.warn("User to permit not found: idToPermit=" + id);
                 throw new UserNotFoundException("User not found");
@@ -105,7 +106,7 @@ public class PlayerPermissionController {
         playerPermissionRepository.delete(entityToDelete);
         LOGGER.info("Permission with user=" + loggedInUserId + ", permitted=" + permittedId + " deleted.");
 
-        final UserEntity loggedInUser = userRepository.findById(loggedInUserId);
+        final UserEntity loggedInUser = userRepository.findById(loggedInUserId).orElseThrow(NoSuchElementException::new);
         final NotificationEntity notification = NotificationTemplates.permissionRemoved(
                 permittedId, timestamp.getTime(), loggedInUser.getName());
         notificationRepository.save(notification);
@@ -120,7 +121,7 @@ public class PlayerPermissionController {
 
         final List<PlayerPermissionEntity> permittedEntities = playerPermissionRepository.findByUserId(loggedInUserId);
         final List<String> permittedIds = EntityToDtoMapper.toPermittedList(permittedEntities);
-        final List<UserEntity> permittedUsers = userRepository.findAll(permittedIds);
+        final List<UserEntity> permittedUsers = userRepository.findAllByIdIn(permittedIds);
 
         return EntityToDtoMapper.toUserDto(permittedUsers);
     }
@@ -131,7 +132,7 @@ public class PlayerPermissionController {
 
         final List<PlayerPermissionEntity> playableEntities = playerPermissionRepository.findByPermittedUserId(loggedInUserId);
         final List<String> playableIds = EntityToDtoMapper.toPlayableList(playableEntities);
-        final List<UserEntity> playableUsers = userRepository.findAll(playableIds);
+        final List<UserEntity> playableUsers = userRepository.findAllByIdIn(playableIds);
 
         return EntityToDtoMapper.toUserDto(playableUsers);
     }

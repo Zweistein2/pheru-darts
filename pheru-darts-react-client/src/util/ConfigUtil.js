@@ -1,12 +1,11 @@
-const PRODUCTION_CLIENT_HOSTNAME = "pheru.github.io";
-const PRODUCTION_HOST = "https://darts.pheru.de";
+const PRODUCTION_HOST = process.env.REACT_APP_BACKEND_HOST;
 
-const DEV_PROTOCOL = "https:";
-const DEV_PORT = "8443";
+const DEV_PROTOCOL = "http:";
+const DEV_PORT = "8080";
 
 class ConfigUtil {
     static getConfig() {
-        if (window.location.hostname === PRODUCTION_CLIENT_HOSTNAME) {
+        if (process.env.NODE_ENV === 'production') {
             return configForHost(PRODUCTION_HOST);
         } else {
             return configForHost(devHostForHostname(window.location.hostname));

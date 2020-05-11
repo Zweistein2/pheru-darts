@@ -6,6 +6,7 @@ import de.pheru.darts.backend.repositories.NotificationRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class MockedNotificationRepository extends MockedRepository implements NotificationRepository {
 
@@ -23,7 +24,7 @@ public class MockedNotificationRepository extends MockedRepository implements No
     }
 
     @Override
-    public List<NotificationEntity> findAll(final Iterable<String> ids) {
+    public List<NotificationEntity> findAllByIdIn(final Iterable<String> ids) {
         final List<NotificationEntity> byId = new ArrayList<>();
         for (final NotificationEntity notification : notifications) {
             for (final String id : ids) {
@@ -37,17 +38,18 @@ public class MockedNotificationRepository extends MockedRepository implements No
 
     @Override
     public List<NotificationEntity> deleteAllByUserId(final String userId) {
-        for (final NotificationEntity notification : new ArrayList<>(notifications)) {
-            if (notification.getUserId().equals(userId)) {
-                notifications.remove(notification);
-            }
-        }
+        notifications.removeIf(notification -> notification.getUserId().equals(userId));
         return null;
     }
 
     @Override
     public Iterable<NotificationEntity> findAll() {
         return notifications;
+    }
+
+    @Override
+    public Iterable<NotificationEntity> findAllById(final Iterable<String> iterable) {
+        return null;
     }
 
     @Override
@@ -69,21 +71,17 @@ public class MockedNotificationRepository extends MockedRepository implements No
     }
 
     @Override
-    public <S extends NotificationEntity> Iterable<S> save(final Iterable<S> entities) {
-        final List<S> saved = new ArrayList<>();
-        for (final S entity : entities) {
-            saved.add(save(entity));
-        }
-        return saved;
-    }
-
-    @Override
-    public NotificationEntity findOne(final String s) {
+    public <S extends NotificationEntity> Iterable<S> saveAll(final Iterable<S> iterable) {
         throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
-    public boolean exists(final String s) {
+    public Optional<NotificationEntity> findById(final String s) {
+        return Optional.empty();
+    }
+
+    @Override
+    public boolean existsById(final String s) {
         throw new UnsupportedOperationException("Not implemented");
     }
 
@@ -93,7 +91,7 @@ public class MockedNotificationRepository extends MockedRepository implements No
     }
 
     @Override
-    public void delete(final String s) {
+    public void deleteById(final String s) {
         throw new UnsupportedOperationException("Not implemented");
     }
 
@@ -103,7 +101,7 @@ public class MockedNotificationRepository extends MockedRepository implements No
     }
 
     @Override
-    public void delete(final Iterable<? extends NotificationEntity> entities) {
+    public void deleteAll(final Iterable<? extends NotificationEntity> iterable) {
         throw new UnsupportedOperationException("Not implemented");
     }
 

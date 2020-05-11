@@ -6,6 +6,7 @@ import de.pheru.darts.backend.repositories.PlayerPermissionRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class MockedPlayerPermissionRepository implements PlayerPermissionRepository {
 
@@ -46,21 +47,13 @@ public class MockedPlayerPermissionRepository implements PlayerPermissionReposit
 
     @Override
     public List<PlayerPermissionEntity> deleteAllByUserId(final String userId) {
-        for (final PlayerPermissionEntity savedEntity : new ArrayList<>(playerPermissions)) {
-            if(savedEntity.getUserId().equals(userId)){
-                playerPermissions.remove(savedEntity);
-            }
-        }
+        playerPermissions.removeIf(savedEntity -> savedEntity.getUserId().equals(userId));
         return null;
     }
 
     @Override
     public List<PlayerPermissionEntity> deleteAllByPermittedUserId(final String permittedUserId) {
-        for (final PlayerPermissionEntity savedEntity : new ArrayList<>(playerPermissions)) {
-            if(savedEntity.getPermittedUserId().equals(permittedUserId)){
-                playerPermissions.remove(savedEntity);
-            }
-        }
+        playerPermissions.removeIf(savedEntity -> savedEntity.getPermittedUserId().equals(permittedUserId));
         return null;
     }
 
@@ -73,17 +66,17 @@ public class MockedPlayerPermissionRepository implements PlayerPermissionReposit
     }
 
     @Override
-    public <S extends PlayerPermissionEntity> Iterable<S> save(final Iterable<S> iterable) {
+    public <S extends PlayerPermissionEntity> Iterable<S> saveAll(final Iterable<S> iterable) {
         throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
-    public PlayerPermissionEntity findOne(final String s) {
-        throw new UnsupportedOperationException("Not implemented");
+    public Optional<PlayerPermissionEntity> findById(final String s) {
+        return Optional.empty();
     }
 
     @Override
-    public boolean exists(final String s) {
+    public boolean existsById(final String s) {
         throw new UnsupportedOperationException("Not implemented");
     }
 
@@ -93,7 +86,7 @@ public class MockedPlayerPermissionRepository implements PlayerPermissionReposit
     }
 
     @Override
-    public Iterable<PlayerPermissionEntity> findAll(final Iterable<String> iterable) {
+    public Iterable<PlayerPermissionEntity> findAllById(final Iterable<String> iterable) {
         throw new UnsupportedOperationException("Not implemented");
     }
 
@@ -103,21 +96,17 @@ public class MockedPlayerPermissionRepository implements PlayerPermissionReposit
     }
 
     @Override
-    public void delete(final String s) {
+    public void deleteById(final String s) {
         throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
     public void delete(final PlayerPermissionEntity playerPermissionEntity) {
-        for (final PlayerPermissionEntity savedEntity : new ArrayList<>(playerPermissions)) {
-            if(savedEntity.getId().equals(playerPermissionEntity.getId())){
-                playerPermissions.remove(savedEntity);
-            }
-        }
+        playerPermissions.removeIf(savedEntity -> savedEntity.getId().equals(playerPermissionEntity.getId()));
     }
 
     @Override
-    public void delete(final Iterable<? extends PlayerPermissionEntity> iterable) {
+    public void deleteAll(final Iterable<? extends PlayerPermissionEntity> iterable) {
         throw new UnsupportedOperationException("Not implemented");
     }
 

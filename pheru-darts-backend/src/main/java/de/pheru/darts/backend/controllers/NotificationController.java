@@ -34,17 +34,17 @@ public class NotificationController {
     @PutMapping
     public List<NotificationDto> put(@RequestBody final NotificationModificationDto notificationModification) {
         final List<String> ids = notificationModification.getIds();
-        final List<NotificationEntity> notifications = notificationRepository.findAll(ids);
+        final List<NotificationEntity> notifications = notificationRepository.findAllByIdIn(ids);
 
         checkUserIds(notifications);
 
+        final List<NotificationEntity> savedNotificationsList = new ArrayList<>();
+
         for (final NotificationEntity notification : notifications) {
             notification.setRead(notificationModification.isRead());
+            savedNotificationsList.add(notificationRepository.save(notification));
         }
-        final Iterable<NotificationEntity> savedNotifications = notificationRepository.save(notifications);
 
-        final List<NotificationEntity> savedNotificationsList = new ArrayList<>();
-        savedNotifications.forEach(savedNotificationsList::add);
         return EntityToDtoMapper.toNotificationDto(savedNotificationsList);
     }
 

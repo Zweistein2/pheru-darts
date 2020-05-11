@@ -31,14 +31,18 @@ function withTimeout(ms, promise) {
 
 function baseFetch(url, method, data, onSuccess, onResponseNotOK, onError, timeout) {
     let fetchParameter = {
-        credentials: 'include'
+        credentials: 'include',
+        'Access-Control-Allow-Origin': 'http://localhost:8080'
     };
     if (method !== 'GET') {
         fetchParameter = {
             body: JSON.stringify(data),
-            headers: {'content-type': 'application/json'},
+            headers: {
+                'content-type': 'application/json'
+            },
             method: method,
-            credentials: 'include'
+            credentials: 'include',
+            'Access-Control-Allow-Origin': 'http://localhost:8080'
         }
     }
     let timeoutMillis = timeout ? timeout : FetchUtil.DEFAULT_TIMEOUT;

@@ -102,7 +102,7 @@ public class StatisticController {
                 return reservedUser.getName();
             }
         }
-        final UserEntity userEntity = userRepository.findById(playerId);
+        final UserEntity userEntity = userRepository.findById(playerId).orElse(null);
         if (userEntity == null) {
             return ReservedUser.DELETED_USER.getName();
         } else {
@@ -128,7 +128,7 @@ public class StatisticController {
             if (isReservedUserId) {
                 continue;
             }
-            final UserEntity userEntity = userRepository.findById(playerId);
+            final UserEntity userEntity = userRepository.findById(playerId).orElse(null);
             if (userEntity == null) {
                 playerIdToPlayerName.put(playerId, ReservedUser.DELETED_USER.getName());
             } else {

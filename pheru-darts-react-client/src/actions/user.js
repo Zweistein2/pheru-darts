@@ -128,7 +128,7 @@ export function signUp(name, password) {
             },
             error => {
                 dispatch(signUpFailed(error.message));
-                dispatch(showError("Sign-up failed", error.message));
+                dispatch(showError("Sign-up failed with error", error.message, error.status));
             }
         );
     };

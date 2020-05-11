@@ -11,10 +11,10 @@ import de.pheru.darts.backend.security.SecurityConstants;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
@@ -24,6 +24,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -54,8 +55,6 @@ public class SecurityTest {
     @MockBean
     private NotificationRepository notificationRepository;
     @MockBean
-    private DynamoDBConfig dynamoDBConfig;
-    @MockBean
     private AuthenticationManager authenticationManager;
 
     @Test
@@ -70,7 +69,7 @@ public class SecurityTest {
     public void loginThenGetUserThenLogout() {
         final TestRestTemplate restTemplate = new TestRestTemplate();
         given(userRepository.findByName(USERNAME)).willReturn(createDefaultUserEntity());
-        given(userRepository.findById(ID)).willReturn(createDefaultUserEntity());
+        given(userRepository.findById(ID)).willReturn(Optional.of(createDefaultUserEntity()));
 
         // Login
         final JWTAuthenticationFilter.AuthenticationInput authInput = createDefaultAuthenticationInput();

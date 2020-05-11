@@ -18,6 +18,8 @@ import de.pheru.darts.backend.validation.UserValidation;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.NoSuchElementException;
+
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -50,7 +52,7 @@ public class UserController {
     @GetMapping
     public UserDto getCurrentUser() {
         final String loggedInUserId = SecurityUtil.getLoggedInUserId();
-        final UserEntity userEntity = userRepository.findById(loggedInUserId);
+        final UserEntity userEntity = userRepository.findById(loggedInUserId).orElseThrow(NoSuchElementException::new);
         return EntityToDtoMapper.toUserDto(userEntity);
     }
 
@@ -75,7 +77,7 @@ public class UserController {
     @PutMapping
     public UserDto putUser(@RequestBody final UserModificationDto userModificationDto) {
         final String loggedInUserId = SecurityUtil.getLoggedInUserId();
-        final UserEntity userEntity = userRepository.findById(loggedInUserId);
+        final UserEntity userEntity = userRepository.findById(loggedInUserId).orElseThrow(NoSuchElementException::new);
         if (!matchesCurrentPassword(userModificationDto.getCurrentPassword(), userEntity)) {
             throw new FailedPasswordConfirmationException(INVALID_CURRENT_PASSWORD);
         }
@@ -106,7 +108,7 @@ public class UserController {
     @DeleteMapping
     public void deleteUser(@RequestBody final UserDeletionDto userDeletionDto) {
         final String loggedInUserId = SecurityUtil.getLoggedInUserId();
-        final UserEntity userEntity = userRepository.findById(loggedInUserId);
+        final UserEntity userEntity = userRepository.findById(loggedInUserId).orElseThrow(NoSuchElementException::new);
         if (!matchesCurrentPassword(userDeletionDto.getCurrentPassword(), userEntity)) {
             throw new FailedPasswordConfirmationException(INVALID_CURRENT_PASSWORD);
         }
