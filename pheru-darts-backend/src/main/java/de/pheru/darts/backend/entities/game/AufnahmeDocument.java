@@ -13,7 +13,8 @@ public class AufnahmeDocument {
     @GeneratedValue(generator="system-uuid")
     @GenericGenerator(name="system-uuid", strategy = "uuid")
     private String id;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "aufnahme_id", nullable = false)
     private List<DartDocument> darts;
 
     public String getId() {
@@ -30,5 +31,13 @@ public class AufnahmeDocument {
 
     public void setDarts(final List<DartDocument> darts) {
         this.darts = darts;
+    }
+
+    public void addDart(final DartDocument dart) {
+        darts.add(dart);
+    }
+
+    public void removeDart(final DartDocument dart) {
+        darts.remove(dart);
     }
 }

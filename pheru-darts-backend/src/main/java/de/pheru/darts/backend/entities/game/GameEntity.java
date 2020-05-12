@@ -19,7 +19,8 @@ public class GameEntity {
     private CheckOutMode checkOutMode;
     private CheckInMode checkInMode;
     private Boolean training;
-    @ManyToMany
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "game_id", nullable = false)
     private List<PlayerDocument> players;
 
     public String getId() {
@@ -92,5 +93,13 @@ public class GameEntity {
 
     public void setPlayers(final List<PlayerDocument> players) {
         this.players = players;
+    }
+
+    public void addPlayer(final PlayerDocument player) {
+        players.add(player);
+    }
+
+    public void removePlayer(final PlayerDocument player) {
+        players.remove(player);
     }
 }
