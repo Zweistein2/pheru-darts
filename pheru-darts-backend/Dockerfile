@@ -1,7 +1,7 @@
 FROM openjdk:8-jdk-alpine
 
 # Create the fat jar
-RUN mvn clean install
+CMD mvn clean install
 
 # Add user with no root-privileges for security reasons
 RUN addgroup -S dart && adduser -S dart -G dart
