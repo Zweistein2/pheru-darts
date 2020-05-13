@@ -4,10 +4,6 @@ FROM node:13.12.0-alpine as build
 # set working directory
 WORKDIR /app
 
-# Arguments
-ARG REACT_APP_BACKEND_HOST
-ENV REACT_APP_BACKEND_HOST=${REACT_APP_BACKEND_HOST}
-
 # add `/app/node_modules/.bin` to $PATH
 ENV PATH /app/node_modules/.bin:$PATH
 
