@@ -23,15 +23,18 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final String hostname;
     private final String jwtSecret;
     private final long jwtExpirationTime;
 
     public WebSecurity(final UserDetailsService userDetailsService,
                        final BCryptPasswordEncoder bCryptPasswordEncoder,
+                       @Value("${app.hostname}") final String hostname,
                        @Value("${auth.jwt.secret}") final String jwtSecret,
                        @Value("${auth.jwt.expiration.time}") final long jwtExpirationTime) {
         this.userDetailsService = userDetailsService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.hostname = hostname;
         this.jwtSecret = jwtSecret;
         this.jwtExpirationTime = jwtExpirationTime;
     }
@@ -67,7 +70,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         final CorsConfiguration corsConfiguration = new CorsConfiguration().applyPermitDefaultValues();
         corsConfiguration.addAllowedMethod(HttpMethod.PUT);
         corsConfiguration.addAllowedMethod(HttpMethod.DELETE);
-        corsConfiguration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+        corsConfiguration.setAllowedOrigins(Collections.singletonList(hostname));
         corsConfiguration.setAllowCredentials(true);
         source.registerCorsConfiguration("/**", corsConfiguration);
         return source;
