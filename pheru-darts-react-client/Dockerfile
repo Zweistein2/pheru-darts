@@ -24,6 +24,8 @@ FROM nginx:stable-alpine
 # Copy the react build from Stage 1
 COPY --from=build /app/build /usr/share/nginx/html
 
+RUN chmod -R 755 /usr/share/nginx/html
+
 # Expose port 80 to the Docker host, so we can access it
 # from the outside.
 EXPOSE 80
