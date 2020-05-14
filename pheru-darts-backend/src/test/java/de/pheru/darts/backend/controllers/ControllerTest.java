@@ -6,6 +6,7 @@ import de.pheru.darts.backend.mocks.repositories.MockedGameRepository;
 import de.pheru.darts.backend.mocks.repositories.MockedNotificationRepository;
 import de.pheru.darts.backend.mocks.repositories.MockedPlayerPermissionRepository;
 import de.pheru.darts.backend.mocks.repositories.MockedUserRepository;
+import de.pheru.darts.backend.repositories.GameRepositoryService;
 import de.pheru.darts.backend.testutil.SecurityTestUtil;
 import org.junit.Before;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -26,6 +27,8 @@ public class ControllerTest {
     protected MockedNotificationRepository notificationRepository;
     protected MockedPlayerPermissionRepository playerPermissionRepository;
 
+    protected GameRepositoryService gameRepositoryService;
+
     @Before
     public void controllerTestSetUp() {
         passwordEncoder = new BCryptPasswordEncoder();
@@ -34,6 +37,8 @@ public class ControllerTest {
         gamesRepository = new MockedGameRepository();
         notificationRepository = new MockedNotificationRepository();
         playerPermissionRepository = new MockedPlayerPermissionRepository();
+
+        gameRepositoryService = new GameRepositoryService(gamesRepository);
 
         SecurityTestUtil.setIdAuthenticationInSecurityContext(LOGIN_ID);
     }

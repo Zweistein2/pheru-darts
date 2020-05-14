@@ -61,7 +61,7 @@ public class GameControllerTest extends ControllerTest {
         assertTrue(savedGame.getTimestamp() >= postGameDate.getTime()
                 && savedGame.getTimestamp() < postGameDate.getTime() + 100);
         assertEquals(game.getPlayers().length, savedGame.getPlayers().size());
-        assertEquals(game.getPlayers()[1].getId(), savedGame.getPlayers().get(1).getId());
+        assertEquals(game.getPlayers()[1].getPlayerId(), savedGame.getPlayers().get(1).getPlayerId());
         assertEquals(game.getPlayers()[0].getAufnahmen().length, savedGame.getPlayers().get(0).getAufnahmen().size());
 
         assertEquals(ID_2, allAfterSave.get(1).getUserId());
@@ -100,7 +100,7 @@ public class GameControllerTest extends ControllerTest {
         assertFalse(allNotificationsBeforeSave.iterator().hasNext());
 
         final GameDto game = createDefaultGame();
-        game.getPlayers()[1].setId(null);
+        game.getPlayers()[1].setPlayerId(null);
         gameController.postGame(game);
 
         final List<GameEntity> allAfterSave = (List<GameEntity>) gamesRepository.findAll();
@@ -118,8 +118,8 @@ public class GameControllerTest extends ControllerTest {
         assertFalse(allBeforeSave.iterator().hasNext());
 
         final GameDto game = createDefaultGame();
-        game.getPlayers()[0].setId(null);
-        game.getPlayers()[1].setId(null);
+        game.getPlayers()[0].setPlayerId(null);
+        game.getPlayers()[1].setPlayerId(null);
         gameController.postGame(game);
 
         final List<GameEntity> allAfterSave = (List<GameEntity>) gamesRepository.findAll();
@@ -174,7 +174,7 @@ public class GameControllerTest extends ControllerTest {
 
     private PlayerDto createDefaultPlayer(final String id, final DartDto[][] aufnahmen) {
         final PlayerDto playerDto = new PlayerDto();
-        playerDto.setId(id);
+        playerDto.setPlayerId(id);
         playerDto.setAufnahmen(aufnahmen);
         return playerDto;
     }

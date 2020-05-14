@@ -51,7 +51,7 @@ public class GameController {
         String loggedInUsername = null;
 
         for (final PlayerDto playerDto : game.getPlayers()) {
-            if (playerDto.getId() == null) {
+            if (playerDto.getPlayerId() == null) {
                 continue;
             }
             final DartDto[][] aufnahmen = playerDto.getAufnahmen();
@@ -60,21 +60,21 @@ public class GameController {
                 playerDto.setAufnahmen(Arrays.copyOfRange(aufnahmen, 0, aufnahmen.length - 1));
             }
             final GameEntity gameEntity = DtoToEntityMapper.toGameEntity(game);
-            gameEntity.setUserId(playerDto.getId());
+            gameEntity.setUserId(playerDto.getPlayerId());
             gameEntity.setTimestamp(timestamp.getTime());
             gameRepository.save(gameEntity);
-            LOGGER.info("Game for user " + playerDto.getId() + " saved by user " + loggedInUserId + ".");
+            LOGGER.info("Game for user " + playerDto.getPlayerId() + " saved by user " + loggedInUserId + ".");
 
-            if (!playerDto.getId().equals(loggedInUserId)) {
+            if (!playerDto.getPlayerId().equals(loggedInUserId)) {
                 if (loggedInUsername == null) {
                     final UserEntity loggedInUser = userRepository.findById(loggedInUserId).orElseThrow(NoSuchElementException::new);
                     loggedInUsername = loggedInUser.getName();
                 }
                 final NotificationEntity notification = NotificationTemplates.gameSaved(
-                        playerDto.getId(), timestamp.getTime(), loggedInUsername);
+                        playerDto.getPlayerId(), timestamp.getTime(), loggedInUsername);
                 notificationRepository.save(notification);
                 LOGGER.info("Notification of type " + notification.getNotificationType()
-                        + " for user " + playerDto.getId()
+                        + " for user " + playerDto.getPlayerId()
                         + " saved by user " + loggedInUserId + ".");
             }
         }
@@ -83,9 +83,9 @@ public class GameController {
     private void checkPermissions(final GameDto game) {
         final String loggedInUserId = SecurityUtil.getLoggedInUserId();
         for (final PlayerDto playerDto : game.getPlayers()) {
-            if (playerDto.getId() != null && playerPermissionRepository.findByUserIdAndPermittedUserId(playerDto.getId(), loggedInUserId) == null) {
+            if (playerDto.getPlayerId() != null && playerPermissionRepository.findByUserIdAndPermittedUserId(playerDto.getPlayerId(), loggedInUserId) == null) {
                 final String msg = "Missing permission for at least one player";
-                LOGGER.warn(msg + ": loggedInUserId=" + loggedInUserId + ", playerId=" + playerDto.getId());
+                LOGGER.warn(msg + ": loggedInUserId=" + loggedInUserId + ", playerId=" + playerDto.getPlayerId());
                 throw new ForbiddenException(msg);
             }
         }

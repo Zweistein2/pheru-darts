@@ -34,7 +34,7 @@ class PermissionSettings extends React.Component {
     mergeUsers(playableUsers, permittedUsers) {
         let playerInformation = playableUsers.map(user => (
             {
-                id: user.id,
+                playerId: user.id,
                 name: user.name,
                 playable: true,
                 permitted: false
@@ -43,7 +43,7 @@ class PermissionSettings extends React.Component {
         for (let i = 0; i < permittedUsers.length; i++) {
             let userInPlayableFound = false;
             for (let j = 0; j < playerInformation.length; j++) {
-                if (permittedUsers[i].id === playerInformation[j].id) {
+                if (permittedUsers[i].id === playerInformation[j].playerId) {
                     playerInformation[j].permitted = true;
                     userInPlayableFound = true;
                     break;
@@ -51,7 +51,7 @@ class PermissionSettings extends React.Component {
             }
             if (!userInPlayableFound) {
                 playerInformation.push({
-                    id: permittedUsers[i].id,
+                    playerId: permittedUsers[i].id,
                     name: permittedUsers[i].name,
                     playable: false,
                     permitted: true
@@ -120,8 +120,8 @@ class PermissionSettings extends React.Component {
                     </thead>
                     <tbody>
                     {this.state.playersInformation.map(playerInformation =>
-                        playerInformation.id !== this.props.userId &&
-                        <tr key={"user_row_" + playerInformation.id}>
+                        playerInformation.playerId !== this.props.userId &&
+                        <tr key={"user_row_" + playerInformation.playerId}>
                             <td style={{
                                 whiteSpace: 'normal',
                                 textOverflow: 'ellipsis',
@@ -137,7 +137,7 @@ class PermissionSettings extends React.Component {
                                     ? <OverlayTrigger placement='top'
                                                       overlay={<Tooltip id="tooltip">Berechtigung nehmen</Tooltip>}>
                                         <Button bsStyle="success"
-                                                onClick={() => this.props.removePlayerPermission(playerInformation.id)}
+                                                onClick={() => this.props.removePlayerPermission(playerInformation.playerId)}
                                                 disabled={this.props.isUpdatingPlayerPermission}>
                                             <Glyphicon glyph="ok"/>
                                         </Button>
@@ -145,7 +145,7 @@ class PermissionSettings extends React.Component {
                                     : <OverlayTrigger placement='top'
                                                       overlay={<Tooltip id="tooltip">Berechtigung geben</Tooltip>}>
                                         <Button bsStyle="danger"
-                                                onClick={() => this.props.addPlayerPermissionById(playerInformation.id)}
+                                                onClick={() => this.props.addPlayerPermissionById(playerInformation.playerId)}
                                                 disabled={this.props.isUpdatingPlayerPermission}>
                                             <Glyphicon glyph="remove"/>
                                         </Button>

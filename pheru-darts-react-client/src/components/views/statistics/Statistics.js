@@ -2,6 +2,7 @@ import React from 'react'
 import {Alert, Glyphicon, Table, ToggleButton, ToggleButtonGroup, Well} from "react-bootstrap";
 import GamesBarChart from "./GamesBarChart";
 import DartsBarChart from "./DartsBarChart";
+import AverageLineChart from "./AverageLineChart";
 import PropTypes from "prop-types";
 import StackLoader from "../../general/loaders/StackLoader";
 import DartsRadarChart from "./DartsRadarChart";
@@ -102,6 +103,11 @@ class Statistics extends React.Component {
                             ? this.createGamesView()
                             : <Alert bsStyle="warning">
                                 <strong>Keine Spiel-Daten vorhanden</strong>
+                            </Alert>}
+                        {this.props.averagesPerAufnahme.length > 0
+                            ? this.createAverageInGameView()
+                            : <Alert bsStyle="warning">
+                                <strong>Keine Average/Spiel-Daten vorhanden</strong>
                             </Alert>}
                     </div>
                 }
@@ -222,6 +228,18 @@ class Statistics extends React.Component {
         </Well>
     }
 
+    createAverageInGameView() {
+        return <Well
+            style={{
+                paddingBottom: 0,
+                marginBottom: 15,
+                textAlign: 'center'
+            }}>
+            <h2 style={{marginTop: 0}}><strong>Average im Spiel</strong></h2>
+            <AverageLineChart data={this.props.averagesPerAufnahme}/>
+        </Well>
+    }
+
     getWinRate() {
         return this.getRate(this.props.gamesWon, this.props.gamesWon + this.props.gamesLost);
     }
@@ -247,6 +265,7 @@ Statistics.propTypes = {
 
     dartData: PropTypes.array,
     gamesData: PropTypes.array,
+    averagesPerAufnahme: PropTypes.array,
 
     options: PropTypes.object.isRequired,
 

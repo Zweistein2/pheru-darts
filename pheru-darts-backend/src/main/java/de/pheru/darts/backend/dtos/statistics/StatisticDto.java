@@ -1,5 +1,7 @@
 package de.pheru.darts.backend.dtos.statistics;
 
+import de.pheru.darts.backend.statistics.AverageInGameStatistic;
+
 import java.util.List;
 
 public class StatisticDto {
@@ -8,6 +10,7 @@ public class StatisticDto {
     private DartStatisticDto darts;
     private AufnahmenStatisticDto aufnahmen;
     private List<ProgressStatisticDto> progress;
+    private AverageInGameStatisticDto average;
 
     public GameStatisticDto getGames() {
         return games;
@@ -39,5 +42,13 @@ public class StatisticDto {
 
     public void setProgress(final List<ProgressStatisticDto> progress) {
         this.progress = progress;
+    }
+
+    public AverageInGameStatisticDto getAverage() {
+        return average;
+    }
+
+    public void setAverage(final AverageInGameStatisticDto average) {
+        this.average = average;
     }
 }

@@ -16,6 +16,7 @@ const mapStateToProps = state => ({
     dartData : state.statistics.dartData,
     gamesData: state.statistics.gamesData,
     progressData: state.statistics.progressData,
+    averagesPerAufnahme: state.statistics.averagesPerAufnahme,
     options: state.statistics.options
 });
 

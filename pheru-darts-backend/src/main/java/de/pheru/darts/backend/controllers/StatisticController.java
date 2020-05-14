@@ -8,7 +8,7 @@ import de.pheru.darts.backend.entities.game.GameEntity;
 import de.pheru.darts.backend.entities.user.UserEntity;
 import de.pheru.darts.backend.mappers.DtoToModelMapper;
 import de.pheru.darts.backend.mappers.ModelToDtoMapper;
-import de.pheru.darts.backend.repositories.GameRepository;
+import de.pheru.darts.backend.repositories.GameRepositoryService;
 import de.pheru.darts.backend.repositories.UserRepository;
 import de.pheru.darts.backend.security.SecurityUtil;
 import de.pheru.darts.backend.statistics.Statistic;
@@ -25,20 +25,20 @@ import java.util.*;
 public class StatisticController {
 
     private final StatisticEvaluation statisticEvaluation;
-    private final GameRepository gameRepository;
+    private final GameRepositoryService gameRepositoryService;
     private final UserRepository userRepository;
 
     public StatisticController(final StatisticEvaluation statisticEvaluation,
-                               final GameRepository gameRepository,
+                               final GameRepositoryService gameRepositoryService,
                                final UserRepository userRepository) {
         this.statisticEvaluation = statisticEvaluation;
-        this.gameRepository = gameRepository;
+        this.gameRepositoryService = gameRepositoryService;
         this.userRepository = userRepository;
     }
 
     @PostMapping
     public StatisticDto createStatistic(@RequestBody(required = false) final StatisticFilterDto statisticFilterDto) {
-        final List<GameEntity> games = gameRepository.findByUserId(SecurityUtil.getLoggedInUserId());
+        final List<GameEntity> games = gameRepositoryService.getGamesWithUser(SecurityUtil.getLoggedInUserId());
 
         final StatisticFilter filter = DtoToModelMapper.toStatisticFilter(statisticFilterDto);
         final Statistic statistic = statisticEvaluation.evaluate(games, filter);
@@ -51,7 +51,7 @@ public class StatisticController {
     @GetMapping("/filterOptions")
     public StatisticFilterOptionsDto getFilterOptions() {
         final String loggedInUserId = SecurityUtil.getLoggedInUserId();
-        final List<GameEntity> sortedGames = new ArrayList<>(gameRepository.findByUserId(loggedInUserId));
+        final List<GameEntity> sortedGames = gameRepositoryService.getGamesWithUser(loggedInUserId);
         sortedGames.sort(Comparator.comparing(GameEntity::getTimestamp));
 
         final Map<String, Set<String>> playerNameToPlayerIds = new HashMap<>();
@@ -59,7 +59,7 @@ public class StatisticController {
         for (int i = 0; i < sortedGames.size(); i++) {
             final GameEntity gameEntity = sortedGames.get(i);
             final StatisticGameInformationDto gameOptionDto = new StatisticGameInformationDto();
-            gameOptionDto.setGameNumber(i + 1);
+            gameOptionDto.setGameNumber(i + 1L);
             gameOptionDto.setId(gameEntity.getId());
             gameOptionDto.setTimestamp(gameEntity.getTimestamp());
             gameOptionDto.setOpponents(new ArrayList<>());
@@ -70,9 +70,9 @@ public class StatisticController {
             }
             gameEntity.getPlayers()
                     .forEach(playerDocument -> {
-                        if (!loggedInUserId.equals(playerDocument.getId())) {
-                            final String playerIdNotNull = playerDocument.getId() == null
-                                    ? ReservedUser.UNREGISTERED_USER.getId() : playerDocument.getId();
+                        if (!loggedInUserId.equals(playerDocument.getPlayerId())) {
+                            final String playerIdNotNull = playerDocument.getPlayerId() == null
+                                    ? ReservedUser.UNREGISTERED_USER.getId() : playerDocument.getPlayerId();
                             final String playerName = playerNameForId(playerIdNotNull);
                             if (!playerNameToPlayerIds.containsKey(playerName)) {
                                 playerNameToPlayerIds.put(playerName, new HashSet<>());
@@ -137,5 +137,4 @@ public class StatisticController {
         }
         return playerIdToPlayerName;
     }
-
 }

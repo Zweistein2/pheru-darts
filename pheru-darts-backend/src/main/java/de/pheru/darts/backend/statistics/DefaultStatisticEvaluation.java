@@ -38,14 +38,14 @@ public class DefaultStatisticEvaluation implements StatisticEvaluation {
         final GameStatistic gameStatistic = statistic.getGames();
         // Statistik für aktuellen User
         for (final PlayerDocument player : game.getPlayers()) {
-            if (player.getId() != null && player.getId().equals(SecurityUtil.getLoggedInUserId())) {
+            if (player.getPlayerId() != null && player.getPlayerId().equals(SecurityUtil.getLoggedInUserId())) {
                 evaluatePlayer(player, statistic, evaluationState, filter);
             }
         }
         // Jetzt steht im GameState fest, ob Spiel gewonnen oder verloren,
         // also kann jetzt die Sieg-Statistik gegen die restlichen Spieler gesetzt werden
         for (final PlayerDocument player : game.getPlayers()) {
-            final String playerIdNotNull = getPlayerIdNotNull(player.getId());
+            final String playerIdNotNull = getPlayerIdNotNull(player.getPlayerId());
             if (!playerIdNotNull.equals(SecurityUtil.getLoggedInUserId())) {
                 final Map<String, GameCountStatistic> gameCountsPerPlayerId = gameStatistic.getCountsPerPlayerIds();
                 gameCountsPerPlayerId.putIfAbsent(playerIdNotNull, new GameCountStatistic());
@@ -71,7 +71,7 @@ public class DefaultStatisticEvaluation implements StatisticEvaluation {
             gameInformation.setTimestamp(game.getTimestamp());
             gameInformation.setOpponentIds(new ArrayList<>());
             for (final PlayerDocument player : game.getPlayers()) {
-                final String playerIdNotNull = getPlayerIdNotNull(player.getId());
+                final String playerIdNotNull = getPlayerIdNotNull(player.getPlayerId());
                 if (!playerIdNotNull.equals(SecurityUtil.getLoggedInUserId())) {
                     gameInformation.getOpponentIds().add(playerIdNotNull);
                 }
@@ -84,12 +84,18 @@ public class DefaultStatisticEvaluation implements StatisticEvaluation {
                     (double) evaluationState.currentGameState.aufnahmeScoreSum
                             / evaluationState.currentGameState.aufnahmeCount);
             statistic.getProgress().add(progressStatistic);
+            for(int i = 0; i < evaluationState.currentGameState.aufnahmeCount; i++) {
+                statistic.getAverage().getAveragesPerAufnahme()
+                         .computeIfAbsent(i, k -> new ArrayList<>()).add(evaluationState.currentGameState.averagesPerAufnahmen.get(i));
+            }
         }
     }
 
     private void evaluatePlayer(final PlayerDocument player, final Statistic statistic, final EvaluationState evaluationState, final StatisticFilter filter) {
         for (final AufnahmeDocument aufnahme : player.getAufnahmen()) {
             evaluateAufnahme(aufnahme, statistic, evaluationState, filter);
+
+            evaluationState.currentGameState.averagesPerAufnahmen.add((double) (evaluationState.currentGameState.lastAufnahmeScore - evaluationState.currentGameState.currentScore));
         }
     }
 
@@ -100,12 +106,12 @@ public class DefaultStatisticEvaluation implements StatisticEvaluation {
         for (final DartDocument dart : aufnahme.getDarts()) {
             evaluateDart(dart, statistic, evaluationState, filter);
         }
+
         if (countAufnahmeForStatistic) {
             evaluationState.aufnahmeCount++;
             evaluationState.currentGameState.aufnahmeCount++;
 
-            final int aufnahmeScore = evaluationState.currentGameState.lastAufnahmeScore
-                    - evaluationState.currentGameState.currentScore;
+            final int aufnahmeScore = evaluationState.currentGameState.lastAufnahmeScore - evaluationState.currentGameState.currentScore;
             evaluationState.aufnahmeScoreSum += aufnahmeScore;
             evaluationState.currentGameState.aufnahmeScoreSum += aufnahmeScore;
 
@@ -211,8 +217,8 @@ public class DefaultStatisticEvaluation implements StatisticEvaluation {
             return true;
         }
         for (final PlayerDocument player : game.getPlayers()) {
-            if ((player.getId() == null && filter.getUserIds().contains(ReservedUser.UNREGISTERED_USER.getId()))
-                    || (player.getId() != null && filter.getUserIds().contains(player.getId()))) {
+            if ((player.getPlayerId() == null && filter.getUserIds().contains(ReservedUser.UNREGISTERED_USER.getId()))
+                    || (player.getPlayerId() != null && filter.getUserIds().contains(player.getPlayerId()))) {
                 return true;
             }
         }
@@ -266,7 +272,7 @@ public class DefaultStatisticEvaluation implements StatisticEvaluation {
         return playerid != null ? playerid : ReservedUser.UNREGISTERED_USER.getId();
     }
 
-    private class EvaluationState {
+    private static class EvaluationState {
         private long currentGameNumber = 0L;
         private EvaluationGameState currentGameState;
         private long aufnahmeScoreSum = 0L;
@@ -274,7 +280,7 @@ public class DefaultStatisticEvaluation implements StatisticEvaluation {
         private final Map<Integer, Integer> highestAufnahmenCounts = new HashMap<>();
     }
 
-    private class EvaluationGameState {
+    private static class EvaluationGameState {
         private final boolean training;
         private final CheckInMode checkInMode;
         private final CheckOutMode checkOutMode;
@@ -284,6 +290,7 @@ public class DefaultStatisticEvaluation implements StatisticEvaluation {
         private boolean won;
         private long aufnahmeScoreSum;
         private int aufnahmeCount;
+        private final List<Double> averagesPerAufnahmen = new ArrayList<>();
 
         private EvaluationGameState(final GameEntity game) {
             this.training = game.isTrainingOrDefault();

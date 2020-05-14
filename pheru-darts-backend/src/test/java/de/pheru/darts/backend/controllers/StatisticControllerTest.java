@@ -27,7 +27,7 @@ public class StatisticControllerTest extends ControllerTest {
     @Before
     public void setUp() {
         mockedStatisticEvaluation = new MockedStatisticEvaluation();
-        statisticController = new StatisticController(mockedStatisticEvaluation, gamesRepository, userRepository);
+        statisticController = new StatisticController(mockedStatisticEvaluation, gameRepositoryService, userRepository);
     }
 
     @Test
@@ -190,7 +190,7 @@ public class StatisticControllerTest extends ControllerTest {
             assertNotNull(filter);
             return new Statistic();
         };
-        statisticController = new StatisticController(evaluation, gamesRepository, userRepository);
+        statisticController = new StatisticController(evaluation, gameRepositoryService, userRepository);
         statisticController.createStatistic(new StatisticFilterDto());
     }
 

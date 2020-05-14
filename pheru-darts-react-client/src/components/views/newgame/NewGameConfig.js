@@ -142,7 +142,7 @@ class NewGameConfig extends React.Component {
         let players = this.state.selectedPlayers;
         if (!this.props.training) {
             for (let i = 0; i < players.length; i++) {
-                if (players[i].id === undefined && players[i].name === "") {
+                if (players[i].playerId === undefined && players[i].name === "") {
                     validationMessages.push("Es wurden nicht alle benötigten Spieler ausgewählt");
                     break;
                 }
@@ -177,7 +177,7 @@ class NewGameConfig extends React.Component {
     startNewGame() {
         let players;
         if (this.props.training) {
-            players = [{id: this.props.userId, name: this.props.userName ? this.props.userName : "Training"}];
+            players = [{playerId: this.props.userId, name: this.props.userName ? this.props.userName : "Training"}];
         } else {
             players = this.state.selectedPlayers;
         }

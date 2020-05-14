@@ -13,8 +13,8 @@ public class PlayerDocumentBuilder {
         document.setAufnahmen(new ArrayList<>());
     }
 
-    public PlayerDocumentBuilder id(final String id) {
-        document.setId(id);
+    public PlayerDocumentBuilder playerId(final String id) {
+        document.setPlayerId(id);
         return this;
     }
 

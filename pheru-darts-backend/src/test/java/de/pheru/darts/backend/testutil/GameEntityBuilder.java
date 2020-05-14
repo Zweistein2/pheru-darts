@@ -52,7 +52,7 @@ public class GameEntityBuilder {
     }
 
     public GameEntityBuilder player(final String playerId) {
-        entity.getPlayers().add(new PlayerDocumentBuilder().id(playerId).build());
+        entity.getPlayers().add(new PlayerDocumentBuilder().playerId(playerId).build());
         return this;
     }
 

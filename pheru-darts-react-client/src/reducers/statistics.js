@@ -19,6 +19,7 @@ function statistics(state = {
     gamesLost: 0,
     dartData: [],
     gamesData: [],
+    averagesPerAufnahme: [],
     averageAufnahmeScore: 0.0,
     highestAufnahmen: {},
     options: {
@@ -81,6 +82,16 @@ function statistics(state = {
             }
             gamesData.sort(SortUtil.sortByOpponentAsc);
 
+            let averagesPerAufnahme = [];
+            let averages = action.data.average.averagesPerAufnahme;
+            for (let property in averages) {
+                if (averages.hasOwnProperty(property)) {
+                    averagesPerAufnahme.push({
+                        aufnahme: property,
+                        average: averages[property],
+                    });
+                }
+            }
             let progressData = action.data.progress.slice().sort(SortUtil.sortByGameInformationTimestampAsc);
             return {
                 ...state,
@@ -94,7 +105,8 @@ function statistics(state = {
                 highestAufnahmen: action.data.aufnahmen.highestAufnahmen,
                 dartData,
                 gamesData,
-                progressData
+                progressData,
+                averagesPerAufnahme
             };
         case FETCH_STATISTICS_FAILED:
             return {

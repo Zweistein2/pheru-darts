@@ -4,6 +4,7 @@ public class PlayerDto {
 
     private String id;
     private DartDto[][] aufnahmen;
+    private String playerId;
 
     public String getId() {
         return id;
@@ -19,5 +20,13 @@ public class PlayerDto {
 
     public void setAufnahmen(final DartDto[][] aufnahmen) {
         this.aufnahmen = aufnahmen;
+    }
+
+    public String getPlayerId() {
+        return playerId;
+    }
+
+    public void setPlayerId(final String playerId) {
+        this.playerId = playerId;
     }
 }

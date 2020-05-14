@@ -20,6 +20,7 @@ public final class ModelToDtoMapper {
         statisticDto.setDarts(toDartStatisticDto(statistic.getDarts()));
         statisticDto.setAufnahmen(toAufnahmenStatisticDto(statistic.getAufnahmen()));
         statisticDto.setProgress(toProgressStatisticDtoList(statistic.getProgress(), playerIdToPlayerName));
+        statisticDto.setAverage(toAverageInGameStatisticDto(statistic.getAverage()));
         return statisticDto;
     }
 
@@ -93,6 +94,14 @@ public final class ModelToDtoMapper {
             progressStatisticDtoList.add(progressStatisticDto);
         }
         return progressStatisticDtoList;
+    }
+
+    private static AverageInGameStatisticDto toAverageInGameStatisticDto(final AverageInGameStatistic averageInGameStatistic) {
+        final AverageInGameStatisticDto averageInGameStatisticDto = new AverageInGameStatisticDto();
+
+        averageInGameStatisticDto.setAveragesPerAufnahme(averageInGameStatistic.getAveragesPerAufnahme());
+
+        return averageInGameStatisticDto;
     }
 
     private static StatisticGameInformationDto toStatisticGameInformationDto(

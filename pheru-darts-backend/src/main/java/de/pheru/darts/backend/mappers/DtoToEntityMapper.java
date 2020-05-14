@@ -37,7 +37,7 @@ public final class DtoToEntityMapper {
 
     private static PlayerDocument toPlayerDocument(final PlayerDto playerDto) {
         final PlayerDocument playerDocument = new PlayerDocument();
-        playerDocument.setId(playerDto.getId());
+        playerDocument.setPlayerId(playerDto.getPlayerId());
         playerDocument.setAufnahmen(toAufnahmeDocument(playerDto.getAufnahmen()));
         return playerDocument;
     }

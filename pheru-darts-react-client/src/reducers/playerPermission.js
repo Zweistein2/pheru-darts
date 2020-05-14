@@ -32,11 +32,21 @@ function playerPermission(state = {
                 fetchPlayableUsersFailed: false
             };
         case FETCH_PLAYABLE_USERS_SUCCESSFUL:
+            let playableUsers = [];
+            let users = action.users.slice();
+            for (let property in users) {
+                if (users.hasOwnProperty(property)) {
+                    playableUsers.push({
+                        playerId: users[property].id,
+                        name: users[property].name,
+                    });
+                }
+            }
             return {
                 ...state,
-                isFetchingPlayableUsers: false,
-                fetchPlayableUsersFailed: false,
-                playableUsers: action.users
+                isUpdatingPlayerPermission: false,
+                updatePlayerPermissionFailed: false,
+                playableUsers: playableUsers
             };
         case FETCH_PLAYABLE_USERS_FAILED:
             return {
